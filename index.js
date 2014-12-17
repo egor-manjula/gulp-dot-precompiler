@@ -52,6 +52,19 @@ function gulpDotify(options) {
     separator:  '.',
     extension:  '',
     dictionary: 'render',
+    formatter: function(root, name, extension, separator) {
+        var parts = name.split(path.sep);
+
+        if (root.length) {
+            parts.unshift(root);
+        }
+
+        if (extension.length) {
+            parts[parts.length-1] = parts[parts.length - 1] + extension;
+        }
+
+        return parts.join(separator);
+    },
 
     //doT.js setting
     templateSettings: {
@@ -85,7 +98,7 @@ function gulpDotify(options) {
       var relative_path = file.relative;
       var trimmed_ext = relative_path.substr(0, relative_path.lastIndexOf('.')) || relative_path;
 
-      var name = getTemplateName(options.root, trimmed_ext, options.extension, options.separator);
+      var name = options.formatter(options.root, trimmed_ext, options.extension, options.separator);
       var code = getTemplateCode(contents,options.templateSettings,defs);
       if(typeof code !== "string")
       {
